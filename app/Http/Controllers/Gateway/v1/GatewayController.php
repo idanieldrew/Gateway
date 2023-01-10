@@ -27,11 +27,9 @@ class GatewayController extends Controller
 
         // if was api,we must send token as json to client,for ex
         return response()->json([
-            'status' => $res[0],
-            'token' => $res[1],
-        ], $res[2]);
-        // else in web
-        // return redirect()->route('payment.navigate', ['token' => $token]);
+            'status' => $res['status'],
+            'token' => $res['token'],
+        ], $res['code']);
     }
 
     public function navigate(Request $request)

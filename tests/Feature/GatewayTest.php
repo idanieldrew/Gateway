@@ -12,7 +12,7 @@ class GatewayTest extends CustomTest
     use DatabaseMigrations;
 
     /** @test */
-    public function register_order_with_payments()
+    public function register_order_with_payments_xx()
     {
         $this->CreateUser();
         $this->post(route('payment.pay'))->assertOk();
@@ -42,7 +42,6 @@ class GatewayTest extends CustomTest
             ])
         ]);
         $this->post(route('payment.pay'))->assertOk();
-
         $this->assertDatabaseHas('payments', [
             'ref_num' => 'test_ref',
             'token' => 'test_token'
@@ -119,7 +118,6 @@ class GatewayTest extends CustomTest
             ]),
         ]);
         $this->post(route('payment.pay'))->assertOk();
-
         $this->post(route('payment.verify'), [
             'token' => Payment::first()->token,
         ])->assertStatus(400);
@@ -129,7 +127,6 @@ class GatewayTest extends CustomTest
     public function wrong_amount_in_navigate()
     {
         $this->CreateUser();
-
         Http::fake([
             config('paystar.create_address') => Http::response([
                 'data' => [
@@ -148,7 +145,6 @@ class GatewayTest extends CustomTest
             ]),
         ]);
         $this->post(route('payment.pay'))->assertOk();
-
         $this->post(route('payment.verify'), [
             'token' => Payment::first()->token,
         ])->assertStatus(400);
