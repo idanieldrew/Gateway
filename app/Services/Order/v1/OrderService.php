@@ -4,11 +4,12 @@ namespace App\Services\Order\v1;
 
 use App\Repository\Order\v1\OrderRepository;
 use App\Repository\Payment\v1\PaymentRepository;
+use App\Services\Service;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-class OrderService
+class OrderService extends Service
 {
     protected const callback = "http://127.0.0.1:8000";
 
@@ -60,11 +61,11 @@ class OrderService
         );
     }
 
-    private function response($status, $token, $code)
+    protected function response($status, $payload, $code)
     {
         return [
             'status' => $status,
-            'token' => $token,
+            'token' => $payload,
             'code' => $code
         ];
     }

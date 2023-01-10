@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Gateway\v1;
 
 use App\Http\Controllers\Controller;
-use App\Repository\Order\v1\OrderRepository;
 use App\Repository\Payment\v1\PaymentRepository;
 use App\Services\Order\v1\OrderService;
 use App\Services\Payment\v1\PaymentService;
@@ -16,16 +15,10 @@ class GatewayController extends Controller
         return resolve(OrderService::class);
     }
 
-    protected function repo()
-    {
-        return resolve(OrderRepository::class);
-    }
-
     public function pay()
     {
         $res = $this->service()->newStore();
 
-        // if was api,we must send token as json to client,for ex
         return response()->json([
             'status' => $res['status'],
             'token' => $res['token'],
@@ -56,7 +49,8 @@ class GatewayController extends Controller
         $res = (new PaymentService)->verifyPayment($request);
 
         return response()->json([
-            'status' => $res[0],
-        ], $res[1]);
+            'status' => $res['status'],
+            'message' => $res['payload']
+        ], $res['code']);
     }
 }
