@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Laravel\Sanctum\Sanctum;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,19 +13,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory()->create();
+        $user = \App\Models\User::factory(['email' => 'test@test.com'])->create();
 
-        \App\Models\Product::factory()->create();
+        $product = \App\Models\Product::factory(['slug' => 'test'])->create();
+        \App\Models\Product::factory(['price' => 10, 'slug' => 'test2'])->create();
 
-        /*$cart = $user->cart()->create([
-            'total' => 2 * $product->price
+        $cart = $user->carts()->create([
+            'total' => $product->price
+        ]);
+
+        $cart->status()->create([
+            'name' => 'ناقص',
+            'reason' => 'در انتظار سفارش'
         ]);
 
         $cart->cart_items()->create([
             'product_id' => $product->id,
-            'quantity' => 2,
+            'quantity' => 1,
             'price' => $product->price,
-            'total' => 2 * $product->price
-        ]);*/
+            'total' => 1 * $product->price
+        ]);
     }
 }

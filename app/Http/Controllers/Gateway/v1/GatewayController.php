@@ -10,6 +10,24 @@ use Illuminate\Http\Request;
 
 class GatewayController extends Controller
 {
+    /** /api/cart */
+    public function append_to_cart()
+    {
+        // check cart->isOpen() ? append product : generate cart
+    }
+
+    /** /api/submit_order */
+    public function submit_order($cart)
+    {
+        // submit form & create order
+        // return link => pardakht.rayanlicense.com/pay/12345
+    }
+
+    /** pardakht.rayanlicense.com/pay/12345 */
+    public function submit_payment($cart)
+    {
+        // create payment & auto submit
+    }
     protected function service()
     {
         return resolve(OrderService::class);

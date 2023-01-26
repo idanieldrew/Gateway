@@ -13,7 +13,7 @@ class Status extends Model
     protected $guarded = [];
 
     /** relations */
-    public function model()
+    public function status()
     {
         return $this->morphTo();
     }

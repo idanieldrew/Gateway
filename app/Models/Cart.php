@@ -10,6 +10,8 @@ class Cart extends Model
 {
     use HasFactory, UseUuid;
 
+    protected $with = ['status', 'cart_items'];
+
     protected $guarded = [];
 
 
@@ -17,5 +19,10 @@ class Cart extends Model
     public function cart_items()
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    public function status()
+    {
+        return $this->morphOne(Status::class, 'model');
     }
 }
