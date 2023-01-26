@@ -4,23 +4,29 @@ namespace Tests;
 
 use App\Models\Product;
 use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 
 class CustomTest extends TestCase
 {
-    protected function FakeData()
+    protected function fakeData()
     {
         \App\Models\Product::factory()->create();
     }
 
-    protected function CreateUser()
+    protected function product()
+    {
+        return Product::factory(['slug' => 'test'])->create();
+    }
+
+    protected function createUser()
     {
         $this->FakeData();
         $user = User::factory()->create();
-        $this->actingAs($user);
-        $this->Faking($user);
+        Sanctum::actingAs($user);
+//        $this->Faking($user);
     }
 
-    protected function Faking($user)
+    protected function faking($user)
     {
         $product = Product::first();
 

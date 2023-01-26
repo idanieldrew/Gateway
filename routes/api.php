@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\Gateway\v1\GatewayController;
 use Illuminate\Support\Facades\Route;
 
 require 'auth.php';
