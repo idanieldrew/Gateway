@@ -15,8 +15,7 @@ class CartTest extends CustomTest
         $this->createUser();
         $product = $this->product();
 
-        $this->post(route('cart.store'), [
-            'slug' => 'test',
+        $this->post(route('cart.store', 'test'), [
             'count' => 1
         ])
             ->assertOk();
@@ -38,8 +37,7 @@ class CartTest extends CustomTest
         $this->createUser();
         $product = $this->product();
 
-        $this->post(route('cart.store'), [
-            'slug' => 'test',
+        $this->post(route('cart.store', 'test'), [
             'count' => $count
         ])
             ->assertOk();
@@ -71,8 +69,7 @@ class CartTest extends CustomTest
             'total' => $count * $product->price
         ]);
 
-        $this->post(route('cart.store'), [
-            'slug' => 'test',
+        $this->post(route('cart.store', 'test'), [
             'count' => 1
         ])->assertStatus(400);
 

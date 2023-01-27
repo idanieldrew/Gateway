@@ -4,10 +4,10 @@ namespace App\Repository\Auth\v1;
 
 use App\Http\Requests\v1\AuthRequest;
 use App\Models\User;
-use App\Repository\Repositpry;
+use App\Repository\Repository;
 use Illuminate\Support\Facades\Hash;
 
-class AuthRepository implements Repositpry
+class AuthRepository implements Repository
 {
 
     public function model()

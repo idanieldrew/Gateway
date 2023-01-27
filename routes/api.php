@@ -7,7 +7,7 @@ require 'auth.php';
 
 Route::prefix('shop/')->middleware('auth:sanctum')->group(function () {
     // append to cart
-    Route::post('cart',[CartController::class,'store'])->name('cart.store');
+    Route::post('cart/{product:slug}', [CartController::class, 'store'])->name('cart.store');
 });
 
 /*Route::prefix('payment')->middleware('auth:sanctum')->group(function () {

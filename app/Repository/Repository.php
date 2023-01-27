@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-interface Repositpry
+interface Repository
 {
     public function model();
 }

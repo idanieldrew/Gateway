@@ -4,10 +4,10 @@ namespace App\Repository\Payment\v1;
 
 use App\Models\Order;
 use App\Models\Payment;
-use App\Repository\Repositpry;
+use App\Repository\Repository;
 use Illuminate\Http\Request;
 
-class PaymentRepository implements Repositpry
+class PaymentRepository implements Repository
 {
     public function model()
     {

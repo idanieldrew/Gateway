@@ -4,9 +4,9 @@ namespace App\Repository\Order\v1;
 
 use App\Models\Order;
 use App\Models\User;
-use App\Repository\Repositpry;
+use App\Repository\Repository;
 
-class OrderRepository implements Repositpry
+class OrderRepository implements Repository
 {
     public function model(): \Illuminate\Database\Eloquent\Builder
     {

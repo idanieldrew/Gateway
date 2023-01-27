@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Observers\CartObserver;
 use App\Observers\Order\v1\OrderObserver;
 use App\Observers\Payment\v1\PaymentObserver;
+use App\Services\Cart\v1\CartService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->registerService();
     }
 
     /**
@@ -32,5 +33,10 @@ class AppServiceProvider extends ServiceProvider
         Order::observe(OrderObserver::class);
         Payment::observe(PaymentObserver::class);
         Cart::observe(CartObserver::class);
+    }
+
+    protected function registerService()
+    {
+        $this->app->singleton('CartService', CartService::class);
     }
 }
