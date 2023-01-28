@@ -21,7 +21,8 @@ class CartItemRepository implements Repository
      */
     public function store(Product $product, $cart, $count)
     {
-        $product->cart_items()->create([
+        return $product->cart_items()->create([
+            'quantity' => $count,
             'cart_id' => $cart,
             'price' => $product->price,
             'total' => $count * $product->price

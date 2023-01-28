@@ -8,8 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class CartItem extends Model
 {
-    use HasFactory,UseUuid;
+    use HasFactory, UseUuid;
+
+    protected $with = ['product'];
 
     protected $guarded = [];
 
+    /** Relations */
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class);
+    }
 }

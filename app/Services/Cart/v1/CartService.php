@@ -2,6 +2,8 @@
 
 namespace App\Services\Cart\v1;
 
+use App\Http\Resources\Cart\v1\CartItemResource;
+use App\Http\Resources\Cart\v1\CartResource;
 use App\Models\Product;
 use App\Repository\Cart\v1\CartRepository;
 use App\Services\Service;
@@ -28,7 +30,7 @@ class CartService extends Service
             $resultNewCart = $this->repository()->appendToNewCart($request->count, $product);
             return $this->response(
                 $resultNewCart['status'],
-                null,
+                new CartResource($resultNewCart['data']),
                 $resultNewCart['message'],
                 $resultNewCart['code']
             );
@@ -47,7 +49,7 @@ class CartService extends Service
         $resultOldCart = $this->repository()->appendToOldCart($request->count, $product);
         return $this->response(
             $resultOldCart['status'],
-            null,
+            new CartResource($resultOldCart['data']),
             $resultOldCart['message'],
             $resultOldCart['code']
         );

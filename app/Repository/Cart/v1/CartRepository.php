@@ -55,6 +55,7 @@ class CartRepository implements Repository
             return [
                 'status' => 'success',
                 'message' => 'new cart',
+                'data' => $cart,
                 'code' => 200
             ];
         } catch (\Exception $exception) {
@@ -113,13 +114,14 @@ class CartRepository implements Repository
             $this->update($count, $product->price);
 
             $id = auth()->user()->carts->last()->id;
-            (new CartItemRepository)->store($product, $id, $count);
+            $cartItem = (new CartItemRepository)->store($product, $id, $count);
 
             DB::commit();
 
             return [
                 'status' => 'success',
-                'message' => 'cart created',
+                'message' => 'Added to cart',
+                'data' => $cartItem->cart,
                 'code' => 200
             ];
 

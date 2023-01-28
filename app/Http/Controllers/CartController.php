@@ -25,8 +25,8 @@ class CartController extends Controller
         return response()->json([
             'status' => $response['status'],
             'payload' => [
-                $response['message'],
-                $response['data']
+                'message' => $response['message'],
+                'data' => $response['data']
             ]
         ], $response['code']);
     }
