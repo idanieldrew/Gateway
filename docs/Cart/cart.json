@@ -1,0 +1,218 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sample gateway",
+    "description": "This is a sample gateway",
+    "version": "1.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000/api/shop/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "cart",
+      "description": "Cart actions",
+      "externalDocs": {
+        "url": "Cart"
+      }
+    }
+  ],
+  "paths": {
+    "/cart/{product}": {
+      "post": {
+        "tags": [
+          "cart"
+        ],
+        "summary": "Add a new product to cart",
+        "description": "Add a new product to cart or added to old cart",
+        "requestBody": {
+          "description": "count product to add cart",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Count"
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "name": "product",
+            "in": "path",
+            "description": "product-slug",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Count": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          }
+        }
+      },
+      "Cart": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "pet status in the store",
+            "enum": [
+              "success",
+              "error"
+            ]
+          },
+          "payload": {
+            "type": "array",
+            "xml": {
+              "name": "addresses",
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          }
+        },
+        "xml": {
+          "name": "customer"
+        }
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Added to cart"
+          },
+          "cart_items": {
+            "$ref": "#/components/schemas/Cart_Item"
+          }
+        },
+        "xml": {
+          "name": "address"
+        }
+      },
+      "Cart_Item": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string",
+            "example": "milk"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int64",
+            "example": 2
+          },
+          "price": {
+            "type": "integer",
+            "format": "int64",
+            "example": "10,00"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "example": "20,00"
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "##default"
+        }
+      }
+    },
+    "requestBodies": {
+      "Pet": {
+        "description": "Pet object that needs to be added to the store",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Cart"
+            }
+          },
+          "application/xml": {
+            "schema": {
+              "$ref": "#/components/schemas/Cart"
+            }
+          }
+        }
+      },
+      "UserArray": {
+        "description": "List of user object",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Cart"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "petstore_auth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
+            "scopes": {
+              "write:pets": "modify pets in your account",
+              "read:pets": "read your pets"
+            }
+          }
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+  }
+}
