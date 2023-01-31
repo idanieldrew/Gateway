@@ -25,4 +25,9 @@ class Cart extends Model
     {
         return $this->morphOne(Status::class, 'model');
     }
+
+    public function order()
+    {
+        return $this->hasOne(Order::class);
+    }
 }

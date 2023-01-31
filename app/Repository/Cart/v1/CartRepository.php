@@ -16,7 +16,11 @@ class CartRepository implements Repository
     }
 
     /**
+     * Store cart
      *
+     * @param $count
+     * @param $price
+     * @return mixed
      */
     public function store($count, $price)
     {
@@ -26,9 +30,6 @@ class CartRepository implements Repository
     }
 
 
-    /**
-     *
-     */
     public function update($count, $price)
     {
         auth()->user()->carts->last()->update([
@@ -45,21 +46,10 @@ class CartRepository implements Repository
      */
     public function appendToNewCart(float $count, Product $product)
     {
-        DB::beginTransaction();
         try {
             $cart = $this->store($count, $product->price);
-
             (new CartItemRepository)->store($product, $cart->id, $count);
-
-            DB::commit();
-            return [
-                'status' => 'success',
-                'message' => 'new cart',
-                'data' => $cart,
-                'code' => 200
-            ];
         } catch (\Exception $exception) {
-            DB::rollBack();
             Log::error("happening error $exception");
             return [
                 'status' => 'error',
@@ -67,6 +57,12 @@ class CartRepository implements Repository
                 'code' => 500
             ];
         }
+        return [
+            'status' => 'success',
+            'message' => 'new cart',
+            'data' => $cart,
+            'code' => 200
+        ];
     }
 
     /**
@@ -109,25 +105,12 @@ class CartRepository implements Repository
      */
     public function appendToOldCart(float $count, Product $product)
     {
-        DB::beginTransaction();
         try {
             $this->update($count, $product->price);
-
             $id = auth()->user()->carts->last()->id;
             $cartItem = (new CartItemRepository)->store($product, $id, $count);
-
-            DB::commit();
-
-            return [
-                'status' => 'success',
-                'message' => 'Added to cart',
-                'data' => $cartItem->cart,
-                'code' => 200
-            ];
-
         } catch (\Exception $exception) {
-            DB::rollBack();
-            Log::error("happening error $exception");
+            Log::error("happening error $exception->getMessage()");
 
             return [
                 'status' => 'error',
@@ -135,5 +118,11 @@ class CartRepository implements Repository
                 'code' => 500
             ];
         }
+        return [
+            'status' => 'success',
+            'message' => 'Added to cart',
+            'data' => $cartItem->cart,
+            'code' => 200
+        ];
     }
 }
