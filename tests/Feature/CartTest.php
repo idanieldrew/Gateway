@@ -13,7 +13,7 @@ class CartTest extends CustomTest
     public function append_new_product_to_new_cart()
     {
         $this->createUser();
-        $product = $this->product();
+        $product = $this->makeProduct();
 
         $this->post(route('cart.store', 'test'), [
             'count' => 1

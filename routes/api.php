@@ -14,7 +14,7 @@ Route::prefix('shop/v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/orders/{cart}', [OrderController::class, 'submitOrder'])->name('order.store');
 
     // link
-    Route::get('payment/{order}', [OrderController::class, 'x'])->name('auto-submit')->middleware('signed');
+    Route::get('payment/{order}', [OrderController::class, 'x'])->name('auto-submit');
 });
 
 /*Route::prefix('payment')->middleware('auth:sanctum')->group(function () {

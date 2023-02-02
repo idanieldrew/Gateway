@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\User;
 use Laravel\Sanctum\Sanctum;
@@ -13,7 +14,7 @@ class CustomTest extends TestCase
         \App\Models\Product::factory()->create();
     }
 
-    protected function product()
+    protected function makeProduct()
     {
         return Product::factory(['slug' => 'test'])->create();
     }
@@ -40,5 +41,16 @@ class CustomTest extends TestCase
             'price' => $product->price,
             'total' => 2 * $product->price
         ]);
+    }
+
+    protected function fakeCart()
+    {
+        $this->createUser();
+        $this->makeProduct();
+        $this->post(route('cart.store', 'test'), [
+            'count' => 1
+        ]);
+
+        return Cart::first();
     }
 }

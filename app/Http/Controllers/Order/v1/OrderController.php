@@ -25,13 +25,10 @@ class OrderController extends Controller
             'reason' => 'submit order'
         ]);
 
-        $url = URL::signedRoute('auto-submit',
-            ['order' => $order->id],
-            now()->addMinutes(15));
-
-        return [
-            'url' => $url
-        ];
+        return response()->json([
+            'status' => 'success',
+            'data' => route('auto-submit', $order->id)
+        ], 201);
     }
 
 }
