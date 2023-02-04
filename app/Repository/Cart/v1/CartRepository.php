@@ -29,7 +29,6 @@ class CartRepository implements Repository
         ]);
     }
 
-
     public function update($count, $price)
     {
         auth()->user()->carts->last()->update([

@@ -2,6 +2,7 @@
 
 namespace App\Repository\Order\v1;
 
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\User;
 use App\Repository\Repository;
@@ -14,14 +15,14 @@ class OrderRepository implements Repository
     }
 
     /**
-     * @param User $user
+     * @param Cart $cart
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function store(User $user)
+    public function store(Cart $cart)
     {
-        return $user->orders()->create([
-            'cart_id' => $user->carts->last()->id,
-            'total' => $user->carts->last()->total,
+        return $cart->order()->create([
+            'user_id' => auth()->user()->id,
+            'total' => $cart->total,
             'expired_at' => now()->addHour()
         ]);
     }

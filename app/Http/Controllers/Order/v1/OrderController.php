@@ -4,31 +4,21 @@ namespace App\Http\Controllers\Order\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
+use App\Services\Order\v1\OrderService;
 
 class OrderController extends Controller
 {
     /**
      *
      */
-    public function submitOrder(Cart $cart, Request $request)
+    public function submitOrder(Cart $cart, OrderService $service)
     {
-        $order = $cart->order()->create([
-            'user_id' => auth()->user()->id,
-            'total' => $cart->total,
-            'expired_at' => now()->addHour()
-        ]);
-
-        $cart->status()->update([
-            'name' => 'prefect',
-            'reason' => 'submit order'
-        ]);
+        $result = $service->submitOrder($cart);
 
         return response()->json([
-            'status' => 'success',
-            'data' => route('auto-submit', $order->id)
-        ], 201);
+            'status' => $result['status'],
+            'data' => $result['data'],
+            'message' => $result['message']
+        ], $result['code']);
     }
-
 }

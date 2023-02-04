@@ -38,11 +38,7 @@ class CartService extends Service
 
         // check repetitive product in cart
         if ($this->repository()->checkRepetitiveProductInCart($product->id)) {
-            return $this->response(
-                'fail',
-                null,
-                'repetitive product',
-                400
+            return $this->response('fail', null, 'repetitive product', 400
             );
         }
 
