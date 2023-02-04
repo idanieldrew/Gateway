@@ -11,6 +11,10 @@ tags:
     description: Cart actions
     externalDocs:
       url: Cart
+  - name: order
+    description: Order actions
+    externalDocs:
+      url: Order
 paths:
   /cart/{product}:
     post:
@@ -18,13 +22,6 @@ paths:
         - cart
       summary: Add a new product to cart
       description: Add a new product to cart or added to old cart
-      requestBody:
-        description: count product to add cart
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Count'
-        required: true
       parameters:
         - name: product
           in: path
@@ -43,6 +40,37 @@ paths:
         '500':
           description: server error
 
+
+  /order/{cart}:
+    post:
+      tags:
+        - order
+      summary: Add order
+      requestBody:
+        description: cart id
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart_id'
+        required: true
+      parameters:
+        - name: cart
+          in: path
+          description: cart_id
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: server error
+
 components:
   schemas:
     Count:
@@ -52,6 +80,13 @@ components:
           type: integer
           format: int64
           example: 1
+    Cart_id:
+      type: object
+      properties:
+        cart:
+          type: string
+          format: string
+          example: a72ab4f8-1c90-4133
     Cart:
       type: object
       properties:
@@ -70,6 +105,28 @@ components:
             $ref: '#/components/schemas/Address'
       xml:
         name: customer
+
+    Order:
+      type: object
+      properties:
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+            - success
+            - fail
+            - error
+        data:
+          type: string
+          format: string
+          example: "http://127.0.0.1:8000/api/shop/v1/payment/a72ab4f8-1c90-4133"
+        message:
+          type: string
+          format: string
+          enum:
+            - ok
+            - problem
+
     Address:
       type: object
       properties:
