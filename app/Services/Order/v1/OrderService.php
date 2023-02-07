@@ -24,7 +24,7 @@ class OrderService extends Service
             return $this->response('error', null, 'problem', 500);
         }
         return $this->response('success',
-            route('auto-submit', $order->id),
+            route('payment.port', $order->id),
             'ok',
             '200'
         );

@@ -4,7 +4,6 @@ namespace App\Repository\Order\v1;
 
 use App\Models\Cart;
 use App\Models\Order;
-use App\Models\User;
 use App\Repository\Repository;
 
 class OrderRepository implements Repository
