@@ -15,7 +15,7 @@ Route::prefix('shop/v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/orders/{cart}', [OrderController::class, 'submitOrder'])->name('order.store');
 
     // link
-    Route::match(['get', 'post'], 'payment/{order}', [PaymentController::class, 'port'])->name('payment.port');
+    Route::post('payment/{order}', [PaymentController::class, 'store'])->name('payment.port');
 });
 
 /*Route::prefix('payment')->middleware('auth:sanctum')->group(function () {

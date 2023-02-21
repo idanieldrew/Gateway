@@ -10,6 +10,7 @@ use App\Observers\Order\v1\OrderObserver;
 use App\Observers\Payment\v1\PaymentObserver;
 use App\Services\Cart\v1\CartService;
 use App\Services\Order\v1\OrderService;
+use App\Services\Payment\v1\PaymentService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,5 +43,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('CartService', CartService::class);
         // Order service
         $this->app->bind('OrderService', OrderService::class);
+        // Payment service
+        $this->app->bind('PaymentService', PaymentService::class);
     }
 }
