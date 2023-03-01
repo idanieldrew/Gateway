@@ -2,7 +2,7 @@
 
 namespace App\Services\Order\v1;
 
-use App\Models\Cart;
+use App\Repository\Cart\v1\CartRepository;
 use App\Repository\Order\v1\OrderRepository;
 use App\Repository\Status\v1\StatusRepositpry;
 use App\Services\Service;
@@ -14,11 +14,27 @@ class OrderService extends Service
         return resolve(OrderRepository::class);
     }
 
-    public function submitOrder(Cart $cart)
+    public function submitOrder($request)
     {
+        $cart = (new CartRepository)->findById($request->cart);
+        
+        if (!$cart->order->isEmpty()) {
+            if ($cart->load('order')->order->last()->model->name == 'pending') {
+                return $this->response('fail', null, 'You has order', '400');
+            }
+            if (!$cart->order->last()->expired_at > now()) {
+                return $this->response('fail', null, 'time out', '400');
+            }
+        }
+
+        foreach ($cart->cart_items as $item) {
+            $item->product()->lockForUpdate()->decrement('quantity', $item->quantity);
+        }
         try {
+            // create order
             $order = $this->repo()->store($cart);
 
+            // update status
             (new StatusRepositpry)->updateCartStatus($cart);
         } catch (\Exception $exception) {
             return $this->response('error', null, 'problem', 500);

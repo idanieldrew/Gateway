@@ -5,6 +5,9 @@ namespace App\Repository\Cart\v1;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Repository\Repository;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -13,6 +16,17 @@ class CartRepository implements Repository
     public function model()
     {
         return Cart::query();
+    }
+
+    /**
+     * Find Cart by id
+     *
+     * @param string $id
+     * @return array|Builder|Builder|Collection|Model|null
+     */
+    public function findById(string $id)
+    {
+        return $this->model()->findOrFail($id);
     }
 
     /**

@@ -10,8 +10,6 @@ class Order extends Model
 {
     use HasFactory,UseUuid;
 
-    protected $with = ['model'];
-
     protected $guarded = [];
 
     /** relations */

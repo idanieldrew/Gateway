@@ -10,10 +10,7 @@ class Cart extends Model
 {
     use HasFactory, UseUuid;
 
-    protected $with = ['status', 'cart_items'];
-
     protected $guarded = [];
-
 
     /** relations */
     public function cart_items()
@@ -28,6 +25,6 @@ class Cart extends Model
 
     public function order()
     {
-        return $this->hasOne(Order::class);
+        return $this->hasMany(Order::class);
     }
 }
