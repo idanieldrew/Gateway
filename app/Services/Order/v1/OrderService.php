@@ -17,12 +17,12 @@ class OrderService extends Service
     public function submitOrder($request)
     {
         $cart = (new CartRepository)->findById($request->cart);
-        
+
         if (!$cart->order->isEmpty()) {
-            if ($cart->load('order')->order->last()->model->name == 'pending') {
-                return $this->response('fail', null, 'You has order', '400');
+            if ($this->repo()->lastStatus($cart->order->last(), 'pending')) {
+                return $this->response('fail', null, 'You had order', '400');
             }
-            if (!$cart->order->last()->expired_at > now()) {
+            if (!$this->repo()->checkLastOrderExpire($cart->order->last(), now())) {
                 return $this->response('fail', null, 'time out', '400');
             }
         }

@@ -26,8 +26,35 @@ class OrderRepository implements Repository
         ]);
     }
 
+    /**
+     * @return mixed
+     */
     public function expiredOrder()
     {
         return $this->model()->where('expired_at', '<', now())->delete();
+    }
+
+    /**
+     * Check last status
+     *
+     * @param Order $order
+     * @param string $name
+     * @return bool
+     */
+    public function lastStatus(Order $order, string $name)
+    {
+        return $order->model->name == $name;
+    }
+
+    /**
+     * Check last order expire
+     *
+     * @param Order $order
+     * @param object $date
+     * @return bool
+     */
+    public function checkLastOrderExpire(Order $order, object $date): bool
+    {
+        return $order->expired_at > $date;
     }
 }
