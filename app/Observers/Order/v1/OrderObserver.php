@@ -6,6 +6,11 @@ use App\Models\Order;
 
 class OrderObserver
 {
+    public function creating(Order $order)
+    {
+        $order->expired_at = now()->addHour();
+    }
+
     /**
      * Handle the Post "created" event.
      *

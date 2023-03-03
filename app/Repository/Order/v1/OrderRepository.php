@@ -14,6 +14,8 @@ class OrderRepository implements Repository
     }
 
     /**
+     * Store order
+     *
      * @param Cart $cart
      * @return \Illuminate\Database\Eloquent\Model
      */
@@ -21,17 +23,20 @@ class OrderRepository implements Repository
     {
         return $cart->order()->create([
             'user_id' => auth()->user()->id,
-            'total' => $cart->total,
-            'expired_at' => now()->addHour()
+            'total' => $cart->total
         ]);
     }
 
     /**
+     * Check expire order
+     *
      * @return mixed
      */
     public function expiredOrder()
     {
-        return $this->model()->where('expired_at', '<', now())->delete();
+        return $this->model()
+            ->where('expired_at', '<', now())
+            ->delete();
     }
 
     /**
@@ -41,7 +46,7 @@ class OrderRepository implements Repository
      * @param string $name
      * @return bool
      */
-    public function lastStatus(Order $order, string $name)
+    public function lastStatus(Order $order, string $name): bool
     {
         return $order->model->name == $name;
     }
