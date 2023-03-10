@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Payment\v1;
+namespace App\Repository\Payment\V1;
 
 use App\Models\Order;
 use App\Models\Payment;
@@ -27,7 +27,7 @@ class PaymentRepository implements Repository
             'amount' => $order->total,
             'token' => $res['token'],
             'ref_num' => $res['ref_num'],
-            'expired_at' => now()->addMinutes(20)
+            'expired_at' => now()->addMinutes(30)
         ]);
     }
 

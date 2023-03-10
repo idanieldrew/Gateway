@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Payment\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Services\Payment\v1\PaymentService;
+use App\Services\Payment\V1\Idpay;
+use App\Services\Payment\V1\PaymentService;
 
 class PaymentController extends Controller
 {
