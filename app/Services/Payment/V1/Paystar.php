@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Http;
 
 class Paystar implements Payment
 {
+    const ADD = "payment.driver.paystar";
+
     public function create(Order $order)
     {
-        $response = Http::withToken(config('paystar.gateway_id'))->post(config('paystar.create_address'), [
+        $response = Http::withToken(config(self::ADD . '.gateway_id'))->post(config(self::ADD . '.create_address'), [
             'amount' => $amount = 5000,
             'order_id' => $id = $order->id,
             'callback' => $callback = route('welcome'),
@@ -33,7 +35,7 @@ class Paystar implements Payment
     public function payment(array $data, string $method)
     {
         return [
-            'url' => config('paystar.payment_address'),
+            'url' => config(self::ADD . '.payment_address'),
             'data' => $data['token'],
             'method' => $method
         ];
@@ -56,7 +58,7 @@ class Paystar implements Payment
     {
         return hash_hmac('SHA512',
             floatval($amount) . '#' . $id . '#' . $callback,
-            config('paystar.sign')
+            config(self::ADD . '.sign')
         );
     }
 }

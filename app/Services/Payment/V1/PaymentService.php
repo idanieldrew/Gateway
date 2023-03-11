@@ -41,7 +41,7 @@ class PaymentService extends Service
             return $this->response(
                 'error',
                 null,
-                'problem',
+                $exception->getMessage(),
                 500);
         }
 

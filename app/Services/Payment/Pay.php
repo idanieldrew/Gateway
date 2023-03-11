@@ -10,10 +10,15 @@ class Pay
 {
     protected $driver;
 
+    /**
+     * @throws DriverNotFoundException
+     */
     public function driver(string $name): Pay
     {
         $this->driver = config("payment.map.$name");
-            !$this->driver ?? throw new DriverNotFoundException("");
+        if ($this->driver == null) {
+            throw new DriverNotFoundException("$name is not support");
+        }
         return $this;
     }
 
