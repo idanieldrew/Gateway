@@ -5,7 +5,7 @@ namespace App\Services\Payment\V1;
 use App\Models\Order;
 use Illuminate\Support\Facades\Http;
 
-class Idpay implements Payment
+class Paystar implements Payment
 {
     public function create(Order $order)
     {

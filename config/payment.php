@@ -1,6 +1,11 @@
 <?php
 
 return [
-    'paystar' => 888,
-    'idpay' => \App\Services\Payment\V1\Idpay::class,
+    'driver' => [
+        'paystar',
+        'idpay'
+    ],
+    'map' => [
+        'paystar' => \App\Services\Payment\V1\Paystar::class,
+    ]
 ];

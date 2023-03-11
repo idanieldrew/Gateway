@@ -2,6 +2,7 @@
 
 namespace App\Services\Payment;
 
+use App\Exceptions\DriverNotFoundException;
 use App\Models\Order;
 use Illuminate\Support\Facades\Log;
 
@@ -11,7 +12,8 @@ class Pay
 
     public function driver(string $name): Pay
     {
-        $this->driver = config("payment.$name");
+        $this->driver = config("payment.map.$name");
+            !$this->driver ?? throw new DriverNotFoundException("");
         return $this;
     }
 

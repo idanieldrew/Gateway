@@ -14,6 +14,12 @@ class PaymentService extends Service
         return resolve(PaymentRepository::class);
     }
 
+    /**
+     * Submit payment
+     *
+     * @param Order $order
+     * @return array
+     */
     public function submit_payment(Order $order)
     {
         try {
