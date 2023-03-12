@@ -8,7 +8,7 @@ interface Payment
 {
     public function create(Order $order);
 
-    public function payment(array $data, string $method);
+    public function payment(array $data);
 
     public function verify();
 }

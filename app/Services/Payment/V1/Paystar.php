@@ -20,8 +20,9 @@ class Paystar implements Payment
 
         if ($response['status'] == -1) {
             return [
-                'status' => 'error',
-                'success' => 500
+                'success' => 'error',
+                'status' => 500,
+                'message' => $response['message']
             ];
         }
 
@@ -32,12 +33,12 @@ class Paystar implements Payment
         ];
     }
 
-    public function payment(array $data, string $method)
+    public function payment(array $data)
     {
         return [
             'url' => config(self::ADD . '.payment_address'),
             'data' => $data['token'],
-            'method' => $method
+            'method' => 'POST'
         ];
     }
 

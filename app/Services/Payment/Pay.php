@@ -4,11 +4,10 @@ namespace App\Services\Payment;
 
 use App\Exceptions\DriverNotFoundException;
 use App\Models\Order;
-use Illuminate\Support\Facades\Log;
 
 class Pay
 {
-    protected $driver;
+    protected string $driver;
 
     /**
      * @throws DriverNotFoundException

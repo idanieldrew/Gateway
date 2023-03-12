@@ -18,7 +18,7 @@ class PaymentRepository implements Repository
      * store payment with order relation
      *
      * @param Order $order
-     * @param array $res
+     * @param mixed $res
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function storeWithPayment(Order $order, array $res)
