@@ -5,7 +5,7 @@ namespace App\Services\Order\v1;
 use App\Models\Cart;
 use App\Repository\Cart\v1\CartRepository;
 use App\Repository\Order\v1\OrderRepository;
-use App\Repository\Status\v1\StatusRepositpry;
+use App\Repository\Status\v1\StatusRepository;
 use App\Services\Service;
 use Illuminate\Support\Collection;
 
@@ -39,7 +39,7 @@ class OrderService extends Service
     }
 
     /**
-     * Store order
+     * Store order for cart
      *
      * @param Cart|Collection $cart
      * @return array
@@ -48,15 +48,21 @@ class OrderService extends Service
     {
         try {
             foreach ($cart->cart_items as $item) {
-                $item->product()->lockForUpdate()->decrement('quantity', $item->quantity);
+                $item->product()
+                    ->lockForUpdate()
+                    ->decrement('quantity', $item->quantity);
             }
-            // create order
-            $order = $this->repo()->store($cart);
+            $order = $this->repo()->store($cart); // create order
 
-            // update status
-            (new StatusRepositpry)->updateCartStatus($cart);
+            (new StatusRepository)
+                ->updateStatus(
+                    $cart,
+                    'perfect',
+                    'submit order'
+                ); // update status
+
         } catch (\Exception $exception) {
-            return $this->response('error', null, 'problem', 500);
+            return $this->response('error', null, $exception->getMessage(), 500);
         }
         return $this->response('success',
             route('payment.port', $order->id),

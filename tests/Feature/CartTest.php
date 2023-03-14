@@ -35,7 +35,7 @@ class CartTest extends CustomTest
     {
         $count = 4;
         $this->createUser();
-        $product = $this->product();
+        $product = $this->makeProduct();
 
         $this->post(route('cart.store', 'test'), [
             'count' => $count
@@ -57,7 +57,7 @@ class CartTest extends CustomTest
     {
         $count = 4;
         $this->createUser();
-        $product = $this->product();
+        $product = $this->makeProduct();
         $cart = auth()->user()->carts()->create([
             'total' => $count * $product->price
         ]);
@@ -71,7 +71,9 @@ class CartTest extends CustomTest
 
         $this->post(route('cart.store', 'test'), [
             'count' => 1
-        ])->assertStatus(400);
+        ])
+            ->assertStatus(400)
+            ->assertSee("fail");
 
         $this->assertDatabaseHas('carts', [
             'total' => $count * $product->price

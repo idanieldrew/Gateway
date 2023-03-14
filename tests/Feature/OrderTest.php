@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Str;
 use Tests\CustomTest;
 
 class OrderTest extends CustomTest
@@ -24,7 +25,7 @@ class OrderTest extends CustomTest
         ]);
 
         $this->assertDatabaseHas('statuses', [
-            'name' => 'prefect'
+            'name' => 'perfect'
         ]);
     }
 
@@ -59,5 +60,15 @@ class OrderTest extends CustomTest
         ])
             ->assertSee(['message' => 'submit new order'])
             ->assertStatus(201);
+    }
+
+    /** @test */
+    public function not_found_cart()
+    {
+        $this->fakeCart();
+        $this->post(route('order.store'), [
+            'cart' => Str::uuid()
+        ])
+            ->assertNotFound();
     }
 }

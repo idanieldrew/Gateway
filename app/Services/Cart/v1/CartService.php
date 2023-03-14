@@ -28,6 +28,7 @@ class CartService extends Service
         // check exist cart
         if ($this->repository()->isEmptyCartUser() || $this->repository()->completeStatus()) {
             $resultNewCart = $this->repository()->appendToNewCart($request->count, $product);
+
             return $this->response(
                 $resultNewCart['status'],
                 new CartResource($resultNewCart['data']),
