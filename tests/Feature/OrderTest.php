@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Order;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Str;
 use Tests\CustomTest;
@@ -41,7 +42,8 @@ class OrderTest extends CustomTest
         $this->post(route('order.store'), [
             'cart' => $cart->id
         ])
-            ->assertStatus(400);
+            ->assertStatus(400)
+            ->assertSee('you cant store new order,because had it');
     }
 
     /** @test */
@@ -54,6 +56,29 @@ class OrderTest extends CustomTest
             ->assertCreated();
 
         $this->travel(2)->hours();
+
+        $this->post(route('order.store'), [
+            'cart' => $cart->id
+        ])
+            ->assertSee(['message' => 'submit new order'])
+            ->assertStatus(201);
+    }
+
+    /** @test */
+    public function submit_new_order_after_payment()
+    {
+        $cart = $this->fakeCart();
+        $this->post(route('order.store'), [
+            'cart' => $cart->id
+        ])
+            ->assertCreated();
+
+        // update status order
+        $order = Order::first();
+        $order->model()->update([
+            'name' => 'payment',
+            'reason' => 'complete order'
+        ]);
 
         $this->post(route('order.store'), [
             'cart' => $cart->id

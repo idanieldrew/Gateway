@@ -29,7 +29,7 @@ class OrderService extends Service
         if (!$cart->order->isEmpty()) {
             if ($this->repo()->lastStatus($cart->order->last(), 'pending')) {
                 if ($this->repo()->checkLastOrderExpire($cart->order->last(), now())) {
-                    return $this->response('fail', null, 'you had time for payment for this order', '400');
+                    return $this->response('fail', null, 'you cant store new order,because had it', '400');
                 }
                 return $this->store($cart);
             }
