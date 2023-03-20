@@ -1,60 +1,49 @@
 <?php
 
-namespace Tests\Feature;
-
-use App\Models\Payment;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use Tests\CustomTest;
 
-class GatewayTest extends CustomTest
-{
-    use DatabaseMigrations;
+uses(Tests\CustomTest::class, RefreshDatabase::class);
 
-    /** @test */
-    public function register_payment_for_paystar()
-    {
-        $order = $this->createOrder();
+it('register_payment_for_paystar', function () {
+    $order = $this->createOrder();
 
-        Http::fake([
-            config('paystar.create_address') => Http::response([
-                'data' => [
-                    'token' => 'test_token',
-                    'ref_num' => 'test_ref'
-                ],
-                'status' => 1
+    Http::fake([
+        config('paystar.create_address') => Http::response([
+            'data' => [
+                'token' => 'test_token',
+                'ref_num' => 'test_ref'
+            ],
+            'status' => 1
+        ])
+    ]);
+
+    $this->post(route('payment.port'), [
+        'order' => $order->id,
+        'gateway' => 'paystar'
+    ])->assertOk();
+
+    $this->assertDatabaseHas('payments', [
+        'amount' => $order->total,
+    ]);
+});
+
+it('register_payment_for_paystar_with_incorrect_data', function () {
+    $order = $this->createOrder();
+
+    Http::fake([
+        config('paystar.create_address') => Http::response(
+            [
+                'status' => -1
             ])
-        ]);
+    ]);
 
-        $this->post(route('payment.port'), [
-            'order' => $order->id,
-            'gateway' => 'paystar'
-        ])->assertOk();
+    $this->post(route('payment.port'), [
+        'order' => $order->id,
+        'gateway' => 'paystar'
+    ])->assertServerError();
 
-        $this->assertDatabaseHas('payments', [
-            'amount' => $order->total,
-        ]);
-    }
-
-    /** @test */
-    public function register_payment_for_paystar_with_incorrect_data()
-    {
-        $order = $this->createOrder();
-
-        Http::fake([
-            config('paystar.create_address') => Http::response(
-                [
-                    'status' => -1
-                ])
-        ]);
-
-        $this->post(route('payment.port'), [
-            'order' => $order->id,
-            'gateway' => 'paystar'
-        ])->assertServerError();
-
-        $this->assertDatabaseMissing('payments', [
-            'amount' => $order->total,
-        ]);
-    }
-}
+    $this->assertDatabaseMissing('payments', [
+        'amount' => $order->total,
+    ]);
+});

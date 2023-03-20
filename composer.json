@@ -15,12 +15,13 @@
         "laravel/tinker": "^2.5"
     },
     "require-dev": {
-        "spatie/laravel-ignition": "^1.0",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
         "laravel/telescope": "^4.14",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
+        "pestphp/pest": "1.22.6",
+        "pestphp/pest-plugin-laravel": "1.x",
         "phpunit/phpunit": "^9.5.10"
     },
     "autoload": {
