@@ -15,14 +15,5 @@ Route::prefix('shop/v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/orders', [OrderController::class, 'submitOrder'])->name('order.store');
 
     // link
-    Route::post('payment/{order}', [PaymentController::class, 'store'])->name('payment.port');
+    Route::post('payment', [PaymentController::class, 'store'])->name('payment.port');
 });
-
-/*Route::prefix('payment')->middleware('auth:sanctum')->group(function () {
-    // ex checkout
-    Route::post('/', [GatewayController::class, 'pay'])->name('payment.pay');
-    // auto submit
-    Route::get('navigate', [GatewayController::class, 'navigate'])->name('payment.navigate');
-    // verify it
-    Route::post('verify', [GatewayController::class, 'verify'])->name('payment.verify');
-});*/

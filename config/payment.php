@@ -20,7 +20,7 @@ return [
 
     // Payment Service
     'map' => [
-        'paystar' => \App\Services\Payment\V1\Paystar::class,
-        'payir' => \App\Services\Payment\V1\PayIr::class,
+        'paystar' => \App\Services\Payment\Gateways\Paystar\V1\Paystar::class,
+        'payir' => \App\Services\Payment\Gateways\PayIr\V1\PayIr::class,
     ]
 ];

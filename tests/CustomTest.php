@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Laravel\Sanctum\Sanctum;
@@ -52,5 +53,15 @@ class CustomTest extends TestCase
         ]);
 
         return Cart::first();
+    }
+
+    protected function createOrder()
+    {
+        $cart = $this->fakeCart();
+        return $cart->order()->create([
+            'user_id' => auth()->id(),
+            'total' => $cart->total,
+
+        ]);
     }
 }

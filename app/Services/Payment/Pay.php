@@ -26,8 +26,8 @@ class Pay
         return (new $this->driver)->create($order);
     }
 
-    public function payment(array $data, string $token)
+    public function payment(array $data)
     {
-        return (new $this->driver)->payment($data, $token);
+        return (new $this->driver)->payment($data);
     }
 }

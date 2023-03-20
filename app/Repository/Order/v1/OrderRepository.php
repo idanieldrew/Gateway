@@ -5,12 +5,26 @@ namespace App\Repository\Order\v1;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Repository\Repository;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class OrderRepository implements Repository
 {
     public function model(): \Illuminate\Database\Eloquent\Builder
     {
         return Order::query();
+    }
+
+    /**
+     * Find or fail order
+     *
+     * @param string $order
+     * @return Builder|Builder[]|Collection|Model|null
+     */
+    public function show(string $order)
+    {
+        return $this->model()->findOrFail($order);
     }
 
     /**

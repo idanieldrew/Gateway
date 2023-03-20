@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Payment\V1;
+namespace App\Services\Payment\Gateways\PayIr\V1;
 
 use App\Models\Order;
+use App\Services\Payment\V1\Payment;
 use Illuminate\Support\Facades\Http;
 
 class PayIr implements Payment

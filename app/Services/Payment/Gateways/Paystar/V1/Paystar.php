@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Payment\V1;
+namespace App\Services\Payment\Gateways\Paystar\V1;
 
 use App\Models\Order;
+use App\Services\Payment\V1\Payment;
 use Illuminate\Support\Facades\Http;
 
 class Paystar implements Payment
@@ -11,12 +12,13 @@ class Paystar implements Payment
 
     public function create(Order $order)
     {
-        $response = Http::withToken(config(self::ADD . '.gateway_id'))->post(config(self::ADD . '.create_address'), [
-            'amount' => $amount = 5000,
-            'order_id' => $id = $order->id,
-            'callback' => $callback = route('welcome'),
-            'sign' => $this->hashSign($amount, $id, $callback),
-        ])->json();
+        $response = Http::withToken(config(self::ADD . '.gateway_id'))
+            ->post(config(self::ADD . '.create_address'), [
+                'amount' => $amount = 5000,
+                'order_id' => $id = $order->id,
+                'callback' => $callback = route('welcome'),
+                'sign' => $this->hashSign($amount, $id, $callback),
+            ])->json();
 
         if ($response['status'] == -1) {
             return [

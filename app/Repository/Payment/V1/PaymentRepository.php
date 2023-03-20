@@ -14,6 +14,7 @@ class PaymentRepository implements Repository
         return Payment::query();
     }
 
+
     /**
      * store payment with order relation
      *
@@ -21,7 +22,7 @@ class PaymentRepository implements Repository
      * @param mixed $res
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function storeWithPayment(Order $order, array $res)
+    public function storeWithOrder(Order $order, array $res)
     {
         return $order->payments()->create([
             'amount' => $order->total,
