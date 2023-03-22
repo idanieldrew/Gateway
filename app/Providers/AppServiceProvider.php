@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\User;
 use App\Observers\CartObserver;
 use App\Observers\Order\v1\OrderObserver;
 use App\Observers\Payment\v1\PaymentObserver;
+use App\Observers\UserObserver;
 use App\Services\Cart\v1\CartService;
 use App\Services\Order\v1\OrderService;
 use App\Services\Payment\Pay;
@@ -33,9 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Order::observe(OrderObserver::class);
-        Payment::observe(PaymentObserver::class);
-        Cart::observe(CartObserver::class);
+        $this->observers();
     }
 
     protected function registerService()
@@ -48,5 +48,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('PaymentService', PaymentService::class);
         //
         $this->app->bind('Pay', Pay::class);
+    }
+
+    protected function observers()
+    {
+        Order::observe(OrderObserver::class);
+        Payment::observe(PaymentObserver::class);
+        Cart::observe(CartObserver::class);
+        User::observe(UserObserver::class);
     }
 }

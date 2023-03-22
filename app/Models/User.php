@@ -57,4 +57,9 @@ class User extends Authenticatable
     {
         return $this->morphOne(Status::class, 'model');
     }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
 }
