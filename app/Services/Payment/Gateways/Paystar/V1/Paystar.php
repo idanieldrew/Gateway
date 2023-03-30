@@ -10,6 +10,7 @@ class Paystar implements Payment
 {
     const ADD = "payment.driver.paystar";
 
+
     public function create(Order $order)
     {
         $response = Http::withToken(config(self::ADD . '.gateway_id'))
@@ -22,16 +23,16 @@ class Paystar implements Payment
 
         if ($response['status'] == -1) {
             return [
-                'success' => 'error',
-                'status' => 500,
-                'message' => $response['message']
+                'status' => 'error',
+                'data' => $response['message'],
+                'code' => 500
             ];
         }
 
         return [
             'status' => 'success',
             'data' => $response['data'],
-            'success' => 200
+            'code' => 200
         ];
     }
 

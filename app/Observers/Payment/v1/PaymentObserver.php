@@ -9,7 +9,7 @@ class PaymentObserver
     public function created(Payment $payment)
     {
         $payment->model()->create([
-            'name' => 'not pay',
+            'name' => 'pending',
             'reason' => 'need to pay'
         ]);
     }

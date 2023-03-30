@@ -22,5 +22,6 @@ return [
     'map' => [
         'paystar' => \App\Services\Payment\Gateways\Paystar\V1\Paystar::class,
         'payir' => \App\Services\Payment\Gateways\PayIr\V1\PayIr::class,
+        'wallet' => \App\Services\Payment\Gateways\Wallet\V1\Wallet::class
     ]
 ];

@@ -19,6 +19,8 @@ class CreatePaymentsTable extends Migration
             $table->decimal('amount');
             $table->text('token');
             $table->string('ref_num');
+            $table->bigInteger('track_id')->nullable();
+            $table->bigInteger('card_num')->nullable();
             $table->timestamp('expired_at');
 
             $table->timestamps();

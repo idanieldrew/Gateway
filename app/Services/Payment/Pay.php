@@ -7,7 +7,7 @@ use App\Models\Order;
 
 class Pay
 {
-    protected string $driver;
+    protected string|null $driver;
 
     /**
      * @throws DriverNotFoundException
