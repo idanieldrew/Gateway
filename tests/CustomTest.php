@@ -61,7 +61,6 @@ class CustomTest extends TestCase
         return $cart->order()->create([
             'user_id' => auth()->id(),
             'total' => $cart->total,
-
         ]);
     }
 }
