@@ -4,6 +4,7 @@ namespace App\Services\Payment\V1;
 
 use App\Exceptions\DriverNotFoundException;
 use App\Facades\Pay;
+use App\Models\Order;
 use App\Repository\Order\v1\OrderRepository;
 use App\Repository\Payment\V1\PaymentRepository;
 use App\Services\Service;
@@ -23,9 +24,12 @@ class PaymentService extends Service
      */
     public function submit_payment(string $order)
     {
-
-        $order = (new OrderRepository())->show($order);
-
+        try {
+            $order = (new OrderRepository())->find($order);
+            $this->beforePayment($order);
+        } catch (\Exception $exception) {
+            return $this->response('fail', null, $exception->getMessage(), 400);
+        }
         try {
             $response = Pay::driver(request()->gateway)->create($order);
             if ($response['status'] == 500) {
@@ -51,6 +55,11 @@ class PaymentService extends Service
             }
             return $this->response('error', null, $exception->getMessage(), 500);
         }
+    }
+
+    protected function beforePayment(Order $order)
+    {
+        (new OrderRepository())->beforePayment($order);
     }
 
     protected function response($status, $data, $message, $code)
