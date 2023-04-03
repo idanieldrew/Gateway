@@ -58,9 +58,9 @@ class CustomTest extends TestCase
     protected function createOrder()
     {
         $cart = $this->fakeCart();
-        return $cart->order()->create([
-            'user_id' => auth()->id(),
-            'total' => $cart->total,
+        $this->post(route('order.store'), [
+            'cart' => $cart->id
         ]);
+        return Order::first();
     }
 }

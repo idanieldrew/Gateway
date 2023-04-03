@@ -144,7 +144,7 @@ class CartRepository implements Repository
         return $this->model()
             ->where('user_id', auth()->user()->id)
             ->whereHas('status', function ($query) {
-                $query->where('name', 'perfect');
+                $query->whereNot('name', 'perfect');
             })
             ->firstOrFail();
     }

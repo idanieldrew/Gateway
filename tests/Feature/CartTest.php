@@ -1,85 +1,85 @@
 <?php
 
-namespace Tests\Feature;
+uses(\Tests\CustomTest::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Tests\CustomTest;
+it('append_new_product_to_new_cart', function () {
+    $this->createUser();
+    $product = $this->makeProduct();
 
-class CartTest extends CustomTest
-{
-    use DatabaseMigrations;
+    $this->post(route('cart.store', 'test'), [
+        'count' => 1
+    ])
+        ->assertOk();
 
-    /** @test */
-    public function append_new_product_to_new_cart()
-    {
-        $this->createUser();
-        $product = $this->makeProduct();
+    $this->assertDatabaseHas('carts', [
+        'total' => $product->price
+    ]);
 
-        $this->post(route('cart.store', 'test'), [
-            'count' => 1
-        ])
-            ->assertOk();
+    $this->assertDatabaseHas('cart_items', [
+        'product_id' => $product->id,
+        'total' => $product->price
+    ]);
+});
 
-        $this->assertDatabaseHas('carts', [
-            'total' => $product->price
-        ]);
+it('append_multi_product_to_new_cart', function () {
+    $count = 4;
+    $this->createUser();
+    $product = $this->makeProduct();
 
-        $this->assertDatabaseHas('cart_items', [
-            'product_id' => $product->id,
-            'total' => $product->price
-        ]);
-    }
+    $this->post(route('cart.store', 'test'), [
+        'count' => $count
+    ])
+        ->assertOk();
 
-    /** @test */
-    public function append_multi_product_to_new_cart()
-    {
-        $count = 4;
-        $this->createUser();
-        $product = $this->makeProduct();
+    $this->assertDatabaseHas('carts', [
+        'total' => 4 * $product->price
+    ]);
 
-        $this->post(route('cart.store', 'test'), [
-            'count' => $count
-        ])
-            ->assertOk();
+    $this->assertDatabaseHas('cart_items', [
+        'product_id' => $product->id,
+        'total' => 4 * $product->price
+    ]);
+});
 
-        $this->assertDatabaseHas('carts', [
-            'total' => 4 * $product->price
-        ]);
+it('append_repetitive_product_to_new_cart', function () {
+    $count = 4;
+    $this->createUser();
+    $product = $this->makeProduct();
+    $cart = auth()->user()->carts()->create([
+        'total' => $count * $product->price
+    ]);
 
-        $this->assertDatabaseHas('cart_items', [
-            'product_id' => $product->id,
-            'total' => 4 * $product->price
-        ]);
-    }
+    $product->cart_items()->create([
+        'cart_id' => $cart->id,
+        'product_id' => $product->id,
+        'price' => $product->price,
+        'total' => $count * $product->price
+    ]);
 
-    /** @test */
-    public function append_repetitive_product_to_new_cart()
-    {
-        $count = 4;
-        $this->createUser();
-        $product = $this->makeProduct();
-        $cart = auth()->user()->carts()->create([
-            'total' => $count * $product->price
-        ]);
+    $this->post(route('cart.store', 'test'), [
+        'count' => 1
+    ])
+        ->assertStatus(400)
+        ->assertSee("fail");
 
-        $product->cart_items()->create([
-            'cart_id' => $cart->id,
-            'product_id' => $product->id,
-            'price' => $product->price,
-            'total' => $count * $product->price
-        ]);
+    $this->assertDatabaseHas('carts', [
+        'total' => $count * $product->price
+    ]);
+    $this->assertDatabaseMissing('carts', [
+        'total' => 5 * $product->price
+    ]);
+});
 
-        $this->post(route('cart.store', 'test'), [
-            'count' => 1
-        ])
-            ->assertStatus(400)
-            ->assertSee("fail");
+it('exist_cart', function () {
+    $this->fakeCart();
 
-        $this->assertDatabaseHas('carts', [
-            'total' => $count * $product->price
-        ]);
-        $this->assertDatabaseMissing('carts', [
-            'total' => 5 * $product->price
-        ]);
-    }
-}
+    $this->get(route('cart.show'))
+        ->assertStatus(200);
+});
+
+it('not_exist_cart', function () {
+    $this->createOrder();
+
+    $this->get(route('cart.show'))
+        ->assertStatus(404);
+});
