@@ -138,4 +138,14 @@ class CartRepository implements Repository
             'code' => 200
         ];
     }
+
+    public function show()
+    {
+        return $this->model()
+            ->where('user_id', auth()->user()->id)
+            ->whereHas('status', function ($query) {
+                $query->where('name', 'perfect');
+            })
+            ->firstOrFail();
+    }
 }

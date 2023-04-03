@@ -8,8 +8,6 @@ class UserObserver
 {
     public function created(User $user)
     {
-        $user->wallet()->create([
-            'balance' => 500000
-        ]);
+        //
     }
 }

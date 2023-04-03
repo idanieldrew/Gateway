@@ -2,7 +2,6 @@
 
 namespace App\Services\Cart\v1;
 
-use App\Http\Resources\Cart\v1\CartItemResource;
 use App\Http\Resources\Cart\v1\CartResource;
 use App\Models\Product;
 use App\Repository\Cart\v1\CartRepository;
@@ -50,6 +49,11 @@ class CartService extends Service
             $resultOldCart['message'],
             $resultOldCart['code']
         );
+    }
+
+    public function showCart()
+    {
+        return $this->repository()->show();
     }
 
     protected function response($status, $data, $message, $code): array

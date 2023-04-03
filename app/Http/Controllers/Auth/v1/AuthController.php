@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\auth\v1;
+namespace App\Http\Controllers\Auth\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\AuthRequest;

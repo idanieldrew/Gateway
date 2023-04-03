@@ -3,12 +3,31 @@
 namespace App\Http\Controllers\Cart\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Cart\v1\CartResource;
 use App\Models\Product;
 use App\Services\Cart\v1\CartService;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    /**
+     * Show cart
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(CartService $service)
+    {
+        $res = $service->showCart();
+
+        return response()->json([
+            'status' => 'success',
+            'payload' => [
+                'message' => 'ok',
+                'data' => new CartResource($res)
+            ]
+        ], 200);
+    }
+
     /**
      * Store product in cart
      *
