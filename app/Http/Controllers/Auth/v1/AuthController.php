@@ -19,13 +19,25 @@ class AuthController extends Controller
     {
         $user = $this->repo()->store($request);
 
-        $token = $user->createToken('token')->plainTextToken;
-
 //        $this->fakeData($user);
         return response()->json([
             'status' => 'success',
-            'token' => $token
+            'user' => $user
         ], Response::HTTP_CREATED);
+    }
+
+    public function login()
+    {
+        $credentials = request(['email', 'password']);
+
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'token' => $token
+        ], Response::HTTP_OK);
     }
 
     /**
