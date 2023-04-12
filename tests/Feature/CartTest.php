@@ -3,6 +3,7 @@
 uses(\Tests\CustomTest::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 it('append_new_product_to_new_cart', function () {
+    $this->withoutExceptionHandling();
     $this->createUser();
     $product = $this->makeProduct();
 

@@ -46,7 +46,7 @@ it('check_paid_before_submit_payment', function () {
     $this->post(route('payment.port'), [
         'order' => $order->id,
         'gateway' => 'paystar'
-    ]);
+    ])->assertOk();
 
     $order->payments->last()->model()->update([
         'name' => 'complete',

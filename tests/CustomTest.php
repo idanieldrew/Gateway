@@ -24,8 +24,7 @@ class CustomTest extends TestCase
     {
         $this->FakeData();
         $user = User::factory()->create();
-        Sanctum::actingAs($user);
-//        $this->Faking($user);
+        $this->actingAs($user,'api');
     }
 
     protected function faking($user)

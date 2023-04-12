@@ -7,7 +7,11 @@ use Illuminate\Support\Facades\Route;
 
 require 'auth.php';
 
-Route::prefix('shop/v1')->middleware('auth:sanctum')->group(function () {
+Route::get('welcome', function () {
+    return 'ok';
+})->name('welcome');
+
+Route::prefix('shop/v1')->middleware('auth:api')->group(function () {
     // append to cart
     Route::post('cart/{product:slug}/add', [CartController::class, 'store'])->name('cart.store');
 
