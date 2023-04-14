@@ -24,16 +24,34 @@
             "externalDocs": {
                 "url": "Order"
             }
+        },
+        {
+            "name": "Payment",
+            "description": "Payment actions",
+            "externalDocs": {
+                "url": "Payment"
+            }
         }
     ],
     "paths": {
-        "/cart/{product}": {
+        "/v1/cart/{product}/add": {
             "post": {
                 "tags": [
                     "cart"
                 ],
                 "summary": "Add a new product to cart",
                 "description": "Add a new product to cart or added to old cart",
+                "requestBody": {
+                    "description": "count product",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Count"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "parameters": [
                     {
                         "name": "product",
@@ -63,7 +81,7 @@
                 }
             }
         },
-        "/order/{cart}": {
+        "/v1/order": {
             "post": {
                 "tags": [
                     "order"
@@ -80,18 +98,6 @@
                     },
                     "required": true
                 },
-                "parameters": [
-                    {
-                        "name": "cart",
-                        "in": "path",
-                        "description": "cart_id",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "string"
-                        }
-                    }
-                ],
                 "responses": {
                     "201": {
                         "description": "Successful operation",
@@ -99,6 +105,40 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "server error"
+                    }
+                }
+            }
+        },
+        "/v1/payment": {
+            "post": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Add payment",
+                "requestBody": {
+                    "description": "order id",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Payment_id"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Payment"
                                 }
                             }
                         }
@@ -129,6 +169,52 @@
                         "type": "string",
                         "format": "string",
                         "example": "a72ab4f8-1c90-4133"
+                    }
+                }
+            },
+            "Payment": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "url": {
+                                "type": "string",
+                                "example": "https://core.paystar.ir/api/pardakht/payment"
+                            },
+                            "data": {
+                                "type": "string",
+                                "example": "token"
+                            },
+                            "method": {
+                                "type": "string",
+                                "example": "POST"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "OK"
+                    }
+                }
+            },
+            "Payment_id": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "success"
+                    },
+                    "gateway": {
+                        "type": "string",
+                        "format": "string",
+                        "example": "paysta"
                     }
                 }
             },
