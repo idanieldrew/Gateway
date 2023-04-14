@@ -15,7 +15,7 @@ class Paystar implements Payment
     {
         $response = Http::withToken(config(self::ADD . '.gateway_id'))
             ->post(config(self::ADD . '.create_address'), [
-                'amount' => $amount = 5000,
+                'amount' => $amount = $order->total,
                 'order_id' => $id = $order->id,
                 'callback' => $callback = route('welcome'),
                 'sign' => $this->hashSign($amount, $id, $callback),
@@ -24,8 +24,9 @@ class Paystar implements Payment
         if ($response['status'] == -1) {
             return [
                 'status' => 'error',
-                'data' => $response['message'],
-                'code' => 500
+                'data' => $response['data'],
+                'msg' => $response['message'],
+                'code' => 400
             ];
         }
 
@@ -47,7 +48,12 @@ class Paystar implements Payment
 
     public function verify()
     {
-        // TODO: Implement verify() method.
+        $response = Http::withToken(config(self::ADD . '.gateway_id'))
+            ->post(config(self::ADD . '.create_address'), [
+                'ref_num' => $refNum = 5000,
+                'amount' => $amount = $order->id,
+                'sign' => $this->hashSign($amount, $refNum, $callback)
+            ])->json();
     }
 
     /**

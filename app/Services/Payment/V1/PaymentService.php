@@ -32,12 +32,13 @@ class PaymentService extends Service
         }
         try {
             $response = Pay::driver(request()->gateway)->create($order);
-            if ($response['status'] == 500) {
+            if ($response['status'] == 'error') {
                 return $this->response(
-                    $response['success'],
-                    null,
+                    $response['status'],
                     $response['data'],
-                    $response['code']);
+                    $response['msg'],
+                    $response['code']
+                );
             }
 
             // store payment with order info

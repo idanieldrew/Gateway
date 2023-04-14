@@ -7,14 +7,14 @@ return [
             'sign' => env('SIGN_PAYSTAR'),
             'create_address' => env('CREATE_PAYSTAR'),
             'payment_address' => env('PAYMENT_PAYSTAR'),
-            'verify_paystar' => env('VERIFY_PAYSTAR')
+            'verify' => env('VERIFY_PAYSTAR')
         ],
         'payir' => [
             'gateway_id' => env('GATEWAY_ID'),
             'sign' => env('SIGN_PAYIR'),
             'create_address' => env('CREATE_PAYIR'),
             'payment_address' => env('PAYMENT_PAYIR'),
-            'verify_paystar' => env('VERIFY_PAYIR')
+            'verify' => env('VERIFY_PAYIR')
         ],
     ],
 

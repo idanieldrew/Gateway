@@ -7,10 +7,6 @@ use Illuminate\Support\Facades\Route;
 
 require 'auth.php';
 
-Route::get('welcome', function () {
-    return 'ok';
-})->name('welcome');
-
 Route::prefix('shop/v1')->middleware('auth:api')->group(function () {
     // append to cart
     Route::post('cart/{product:slug}/add', [CartController::class, 'store'])->name('cart.store');
@@ -23,4 +19,7 @@ Route::prefix('shop/v1')->middleware('auth:api')->group(function () {
 
     // link
     Route::post('payment', [PaymentController::class, 'store'])->name('payment.port');
+
+    Route::post('welcome', [PaymentController::class, 'callback'])->name('welcome');
+//    Route::post('verify', [PaymentController::class, 'verify'])->name('payment.verify');
 });
