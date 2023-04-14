@@ -31,7 +31,9 @@ class PaymentService extends Service
             return $this->response('fail', null, $exception->getMessage(), 400);
         }
         try {
-            $response = Pay::driver(request()->gateway)->create($order);
+            $payment = $this->repo()->storebeforPayment($order);
+
+            $response = Pay::driver(request()->gateway)->create($order, $payment->id);
             if ($response['status'] == 'error') {
                 return $this->response(
                     $response['status'],
@@ -41,8 +43,7 @@ class PaymentService extends Service
                 );
             }
 
-            // store payment with order info
-            $this->repo()->storeWithOrder($order, $response['data']);
+            $this->repo()->updateAfterPayment($payment, $response['data']);
 
             return $this->response(
                 'success',
@@ -58,9 +59,53 @@ class PaymentService extends Service
         }
     }
 
-    protected function beforePayment(Order $order)
+    /**
+     * Operation before submit payment
+     *
+     * @param Order $order
+     * @return void
+     * @throws \Exception
+     */
+    protected function beforePayment(Order $order): void
     {
         (new OrderRepository())->beforePayment($order);
+    }
+
+    /**
+     * Operation after pay
+     *
+     * @param $payment
+     * @param $request
+     * @return array
+     */
+    public function outputPay($payment, $request)
+    {
+        if ($request->status == -1) {
+            return $this->response(
+                'error',
+                null,
+                'unsuccessfully',
+                500
+            );
+        }
+        $this->repo()->updateBeforeVerify($payment, $request->tracking_code, $request->card_number);
+
+        $response = Pay::verify([
+            'amount' => $payment->amount,
+            'req' => $request
+        ]);
+
+        $this->repo()->updateStatus($payment, [
+            'name' => $response['status'],
+            'reason' => $response['message']
+        ]);
+
+        return $this->response(
+            $response['status'],
+            $response['data'],
+            $response['message'],
+            $response['code']
+        );
     }
 
     protected function response($status, $data, $message, $code)

@@ -17,10 +17,10 @@ class CreatePaymentsTable extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('order_id')->constrained()->cascadeOnDelete();
             $table->decimal('amount');
-            $table->text('token');
-            $table->string('ref_num');
-            $table->bigInteger('track_id')->nullable();
-            $table->bigInteger('card_num')->nullable();
+            $table->text('token')->nullable();
+            $table->string('ref_num')->nullable();
+            $table->string('track_id')->nullable();
+            $table->string('card_num')->nullable();
             $table->timestamp('expired_at');
 
             $table->timestamps();

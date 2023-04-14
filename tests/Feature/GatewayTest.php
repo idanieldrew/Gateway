@@ -7,7 +7,15 @@ uses(Tests\CustomTest::class, RefreshDatabase::class);
 
 it('expired_order_before_submit_payment', function () {
     $order = $this->createOrder();
-
+    Http::fake([
+        config('payment.driver.paystar.create_address') => Http::response([
+            'data' => [
+                'token' => 'test_token',
+                'ref_num' => 'test_ref'
+            ],
+            'status' => 1
+        ])
+    ]);
     $this->travel(2)->hours();
 
     $this->post(route('payment.port'), [
@@ -22,8 +30,17 @@ it('expired_order_before_submit_payment', function () {
     ]);
 });
 
-it('opened_order_before_submit_payment', function () {
+it('closed_order_before_submit_payment', function () {
     $order = $this->createOrder();
+    Http::fake([
+        config('payment.driver.paystar.create_address') => Http::response([
+            'data' => [
+                'token' => 'test_token',
+                'ref_num' => 'test_ref'
+            ],
+            'status' => 1
+        ])
+    ]);
     $order->model()->update([
         'name' => 'complete',
         'reason' => 'payed'
@@ -42,7 +59,15 @@ it('opened_order_before_submit_payment', function () {
 
 it('check_paid_before_submit_payment', function () {
     $order = $this->createOrder();
-
+    Http::fake([
+        config('payment.driver.paystar.create_address') => Http::response([
+            'data' => [
+                'token' => 'test_token',
+                'ref_num' => 'test_ref'
+            ],
+            'status' => 1
+        ])
+    ]);
     $this->post(route('payment.port'), [
         'order' => $order->id,
         'gateway' => 'paystar'
@@ -63,7 +88,15 @@ it('check_paid_before_submit_payment', function () {
 
 it('pay_again_before_submit_payment', function () {
     $order = $this->createOrder();
-
+    Http::fake([
+        config('payment.driver.paystar.create_address') => Http::response([
+            'data' => [
+                'token' => 'test_token',
+                'ref_num' => 'test_ref'
+            ],
+            'status' => 1
+        ])
+    ]);
     $this->post(route('payment.port'), [
         'order' => $order->id,
         'gateway' => 'paystar'
@@ -80,7 +113,7 @@ it('register_payment_for_paystar', function () {
     $order = $this->createOrder();
 
     Http::fake([
-        config('paystar.create_address') => Http::response([
+        config('payment.driver.paystar.create_address') => Http::response([
             'data' => [
                 'token' => 'test_token',
                 'ref_num' => 'test_ref'
@@ -99,13 +132,14 @@ it('register_payment_for_paystar', function () {
     ]);
 });
 
-it('register_payment_for_paystar_with_incorrect_data', function () {
+it('cant_complete_register_payment_for_paystar_with_incorrect_data', function () {
     $order = $this->createOrder();
 
     Http::fake([
-        config('paystar.create_address') => Http::response(
+        config('payment.driver.paystar.create_address') => Http::response(
             [
-                'status' => -1
+                'status' => -1,
+                'message' => 'fail'
             ])
     ]);
 
@@ -114,7 +148,116 @@ it('register_payment_for_paystar_with_incorrect_data', function () {
         'gateway' => 'paystar'
     ])->assertServerError();
 
-    $this->assertDatabaseMissing('payments', [
-        'amount' => $order->total,
+    $this->assertDatabaseHas('payments', [
+        'ref_num' => null,
     ]);
 });
+
+it('incorrect_data_to_callback_url', function () {
+    $order = $this->createOrder();
+    Http::fake([
+        config('payment.driver.paystar.create_address') => Http::response([
+            'data' => [
+                'token' => 'test_token',
+                'ref_num' => 'test_ref'
+            ],
+            'status' => 1
+        ])
+    ]);
+
+    $this->post(route('payment.port'), [
+        'order' => $order->id,
+        'gateway' => 'paystar'
+    ])->assertStatus(200);
+
+    $this->post(route('callback', ['payment' => \App\Models\Payment::first()->id]), [
+        'status' => '-1',
+        'order_id' => 'string',
+        'ref_num' => 'string',
+        'transaction_id' => 'string',
+        'card_number' => 'string',
+        'tracking_code' => 'string'
+    ])->assertStatus(500);
+
+    $this->assertDatabaseHas('payments', [
+        'card_num' => null,
+    ]);
+});
+
+it('correct_verify', function () {
+    $order = $this->createOrder();
+    Http::fake([
+        config('payment.driver.paystar.create_address') => Http::response([
+            'data' => [
+                'token' => 'test_token',
+                'ref_num' => 'test_ref'
+            ],
+            'status' => 1
+        ])
+    ]);
+
+    Http::fake([
+        config('payment.driver.paystar.verify') => Http::response([
+            'data' => 'test',
+            'message' => 'success',
+            'status' => 1
+        ])
+    ]);
+
+    $this->post(route('payment.port'), [
+        'order' => $order->id,
+        'gateway' => 'paystar'
+    ])->assertStatus(200);
+
+    $this->post(route('callback', ['payment' => \App\Models\Payment::first()->id]), [
+        'status' => '1',
+        'order_id' => 'string',
+        'ref_num' => 'string',
+        'transaction_id' => 'string',
+        'card_number' => 'string',
+        'tracking_code' => 'string'
+    ])->assertStatus(200);
+
+    $this->assertDatabaseHas('payments', [
+        'track_id' => 'string'
+    ]);
+    $this->assertDatabaseHas('statuses', [
+        'name' => 'success'
+    ]);
+});
+
+it('incorrect_verify', function () {
+    $order = $this->createOrder();
+    Http::fake([
+        config('payment.driver.paystar.create_address') => Http::response([
+            'data' => [
+                'token' => 'test_token',
+                'ref_num' => 'test_ref'
+            ],
+            'status' => 1
+        ])
+    ]);
+
+    Http::fake([
+        config('payment.driver.paystar.verify') => Http::response([
+            'data' => '',
+            'message' => 'fail',
+            'status' => '-1'
+        ])
+    ]);
+
+    $this->post(route('payment.port'), [
+        'order' => $order->id,
+        'gateway' => 'paystar'
+    ])->assertStatus(200);
+
+    $this->post(route('callback', ['payment' => \App\Models\Payment::first()->id]), [
+        'status' => '1',
+        'order_id' => 'string',
+        'ref_num' => 'string',
+        'transaction_id' => 'string',
+        'card_number' => 'string',
+        'tracking_code' => 'string'
+    ])->assertStatus(400);
+});
+

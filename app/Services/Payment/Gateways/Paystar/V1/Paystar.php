@@ -11,19 +11,19 @@ class Paystar implements Payment
     const ADD = "payment.driver.paystar";
 
 
-    public function create(Order $order)
+    public function create(Order $order, string $payment)
     {
         $response = Http::withToken(config(self::ADD . '.gateway_id'))
             ->post(config(self::ADD . '.create_address'), [
                 'amount' => $amount = $order->total,
                 'order_id' => $id = $order->id,
-                'callback' => $callback = route('welcome'),
+                'callback' => $callback = route('callback', $payment),
                 'sign' => $this->hashSign($amount, $id, $callback),
             ])->json();
 
         if ($response['status'] == -1) {
             return [
-                'status' => 'error',
+                'status' => 'fail',
                 'data' => $response['data'],
                 'msg' => $response['message'],
                 'code' => 400
@@ -46,14 +46,29 @@ class Paystar implements Payment
         ];
     }
 
-    public function verify()
+    public function verify(array $data)
     {
         $response = Http::withToken(config(self::ADD . '.gateway_id'))
-            ->post(config(self::ADD . '.create_address'), [
-                'ref_num' => $refNum = 5000,
-                'amount' => $amount = $order->id,
-                'sign' => $this->hashSign($amount, $refNum, $callback)
+            ->post(config(self::ADD . '.verify'), [
+                'amount' => $amount = $data['amount'],
+                'sign' => $this->verifySign($amount, $data['req']['ref_num'], $data['req']['card_number'], $data['req']['tracking_code'])
             ])->json();
+
+        if ($response['status'] == -1) {
+            return [
+                'status' => 'error',
+                'data' => $response['data'],
+                'message' => $response['message'],
+                'code' => 400
+            ];
+        }
+
+        return [
+            'status' => 'success',
+            'data' => $response['data'],
+            'message' => $response['message'],
+            'code' => 200
+        ];
     }
 
     /**
@@ -68,6 +83,14 @@ class Paystar implements Payment
     {
         return hash_hmac('SHA512',
             floatval($amount) . '#' . $id . '#' . $callback,
+            config(self::ADD . '.sign')
+        );
+    }
+
+    private function verifySign($amount, $ref_num, $card_number, $tracking_code)
+    {
+        return hash_hmac('SHA512',
+            floatval($amount) . '#' . $ref_num . '#' . $card_number . '#' . $tracking_code,
             config(self::ADD . '.sign')
         );
     }

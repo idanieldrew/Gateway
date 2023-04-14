@@ -5,7 +5,6 @@ namespace App\Repository\Payment\V1;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Repository\Repository;
-use Illuminate\Http\Request;
 
 class PaymentRepository implements Repository
 {
@@ -14,63 +13,63 @@ class PaymentRepository implements Repository
         return Payment::query();
     }
 
-
     /**
      * store payment with order relation
      *
      * @param Order $order
-     * @param mixed $res
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function storeWithOrder(Order $order, array $res)
+    public function storebeforPayment(Order $order)
     {
         return $order->payments()->create([
             'amount' => $order->total,
-            'token' => $res['token'],
-            'ref_num' => $res['ref_num'],
             'expired_at' => now()->addMinutes(30)
         ]);
     }
 
     /**
-     * check expire payment and order
+     * store payment with order relation
      *
-     * @param Request $request
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @param Payment $payment
+     * @param array $data
+     * @return bool
      */
-    public function checkExpired(Request $request)
+    public function updateAfterPayment(Payment $payment, array $data)
     {
-        return $this->model()
-            ->with('order')
-            ->where('token', $request->token)
-            ->where('expired_at', '>', now())
-            ->whereHas('order', function ($query) {
-                $query->where('expired_at', '>', now());
-            })->first();
+        return $payment->update([
+            'ref_num' => $data['ref_num'],
+            'token' => $data['token'],
+        ]);
     }
 
     /**
-     * update it,if information is correct
+     * Update payment after return payment
      *
-     * @param array $res
+     * @param Payment $payment
+     * @param string $track_id
+     * @param string $card_num
      * @return bool
      */
-    public function canUpdate(array $res)
+    public function updateBeforeVerify(Payment $payment, string $track_id, string $card_num): bool
     {
-        $payment = $this->model()->where('amount', $res['price'])
-            ->where('ref_num', $res['ref_num'])->first();
+        return $payment->update([
+            'track_id' => $track_id,
+            'card_num' => $card_num
+        ]);
+    }
 
-        if ($payment) {
-            $payment->model()->update([
-                'name' => 'done',
-                'reason' => 'payed'
-            ]);
-            $payment->order->model->update([
-                'name' => 'done',
-                'reason' => 'payed'
-            ]);
-            return true;
-        }
-        return false;
+    /**
+     * Update status
+     *
+     * @param Payment $payment
+     * @param array $details
+     * @return int
+     */
+    public function updateStatus(Payment $payment, array $details)
+    {
+        return $payment->model()->update([
+            'name' => $details['name'],
+            'reason' => $details['reason']
+        ]);
     }
 }

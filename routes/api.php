@@ -20,6 +20,6 @@ Route::prefix('shop/v1')->middleware('auth:api')->group(function () {
     // link
     Route::post('payment', [PaymentController::class, 'store'])->name('payment.port');
 
-    Route::post('welcome', [PaymentController::class, 'callback'])->name('welcome');
+    Route::post('finance/{payment}', [PaymentController::class, 'callback'])->name('callback');
 //    Route::post('verify', [PaymentController::class, 'verify'])->name('payment.verify');
 });

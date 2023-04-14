@@ -4,13 +4,18 @@ namespace App\Http\Controllers\Payment\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaymentRequest;
+use App\Http\Requests\PayStarCallBackRequest;
+use App\Models\Payment;
 use App\Services\Payment\V1\PaymentService;
-use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
     /**
-     * @return string
+     * Store payment
+     *
+     * @param PaymentRequest $request
+     * @param PaymentService $service
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(PaymentRequest $request, PaymentService $service)
     {
@@ -23,8 +28,14 @@ class PaymentController extends Controller
         ], $result['code']);
     }
 
-    public function verify(Request $request)
+    public function callback(Payment $payment, PayStarCallBackRequest $request, PaymentService $service)
     {
-        //
+        $res = $service->outputPay($payment, $request);
+
+        return response()->json([
+            'status' => $res['status'],
+            'data' => $res['data'],
+            'message' => $res['message']
+        ], $res['code']);
     }
 }

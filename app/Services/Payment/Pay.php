@@ -21,13 +21,18 @@ class Pay
         return $this;
     }
 
-    public function create(Order $order)
+    public function create(Order $order, string $payment)
     {
-        return (new $this->driver)->create($order);
+        return (new $this->driver)->create($order, $payment);
     }
 
     public function payment(array $data)
     {
         return (new $this->driver)->payment($data);
+    }
+
+    public function verify(array $data)
+    {
+        return (new $this->driver)->verify($data);
     }
 }
