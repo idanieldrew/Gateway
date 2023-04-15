@@ -47,7 +47,7 @@ class OrderRepository implements Repository
      *
      * @return mixed
      */
-    public function expiredOrder()
+    public function expired()
     {
         return $this->model()
             ->where('expired_at', '<', now())

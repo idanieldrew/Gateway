@@ -72,4 +72,19 @@ class PaymentRepository implements Repository
             'reason' => $details['reason']
         ]);
     }
+
+    /**
+     * Delete records
+     *
+     * @param int $day
+     * @return mixed
+     */
+    public function deleteExpired(int $day)
+    {
+        $daysAgo = now()->subDays($day)->toDateString();
+
+        return $this->model()
+            ->whereDate('expired_at', '>=', $daysAgo)
+            ->delete();
+    }
 }

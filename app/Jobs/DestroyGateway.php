@@ -2,14 +2,14 @@
 
 namespace App\Jobs;
 
-use App\Repository\Order\v1\OrderRepository;
+use App\Repository\Payment\V1\PaymentRepository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class DestroyOrder implements ShouldQueue
+class DestroyGateway implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -30,6 +30,6 @@ class DestroyOrder implements ShouldQueue
      */
     public function handle()
     {
-        (new OrderRepository)->expired();
+        (new PaymentRepository)->deleteExpired(7);
     }
 }

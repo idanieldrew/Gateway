@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\DestroyGateway;
 use App\Jobs\DestroyOrder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -16,8 +17,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-        $schedule->job(DestroyOrder::class)->hourly();
+        // For test scenario we'll delete expired orders but in real we can transform to other engine
+        $schedule->job(DestroyOrder::class)->everyMinute();
+        $schedule->job(DestroyGateway::class)->everyMinute();
+        // CartDestroy
     }
 
     /**
