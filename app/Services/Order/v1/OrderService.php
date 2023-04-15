@@ -11,9 +11,8 @@ use Illuminate\Support\Collection;
 
 class OrderService extends Service
 {
-    private function repo()
+    public function __construct(public OrderRepository $repository)
     {
-        return resolve(OrderRepository::class);
     }
 
     /**
@@ -27,8 +26,8 @@ class OrderService extends Service
         $cart = (new CartRepository)->findById($request->cart);
 
         if (!$cart->order->isEmpty()) {
-            if ($this->repo()->lastStatus($cart->order->last(), 'pending')) {
-                if ($this->repo()->checkLastOrderExpire($cart->order->last(), now())) {
+            if ($this->repository->lastStatus($cart->order->last(), 'pending')) {
+                if ($this->repository->checkLastOrderExpire($cart->order->last(), now())) {
                     return $this->response('fail', null, 'you cant store new order,because had it', '400');
                 }
                 return $this->store($cart);
@@ -52,7 +51,7 @@ class OrderService extends Service
                     ->lockForUpdate()
                     ->decrement('quantity', $item->quantity);
             }
-            $order = $this->repo()->store($cart); // create order
+            $order = $this->repository->store($cart); // create order
 
             (new StatusRepository)
                 ->updateStatus(

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Cart\v1\CartResource;
 use App\Models\Product;
 use App\Services\Cart\v1\CartService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -13,7 +14,8 @@ class CartController extends Controller
     /**
      * Show cart
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param CartService $service
+     * @return JsonResponse
      */
     public function show(CartService $service)
     {

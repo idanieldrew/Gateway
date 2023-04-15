@@ -5,14 +5,12 @@ namespace App\Services\Cart\v1;
 use App\Http\Resources\Cart\v1\CartResource;
 use App\Models\Product;
 use App\Repository\Cart\v1\CartRepository;
-use App\Services\Service;
 use Illuminate\Http\Request;
 
-class CartService extends Service
+class CartService
 {
-    private function repository()
+    public function __construct(public CartRepository $repository)
     {
-        return resolve(CartRepository::class);
     }
 
     /**
@@ -25,8 +23,8 @@ class CartService extends Service
     public function appendToCart(Product $product, Request $request)
     {
         // check exist cart
-        if ($this->repository()->isEmptyCartUser() || $this->repository()->completeStatus()) {
-            $resultNewCart = $this->repository()->appendToNewCart($request->count, $product);
+        if ($this->repository->isEmptyCartUser() || $this->repository->completeStatus()) {
+            $resultNewCart = $this->repository->appendToNewCart($request->count, $product);
 
             return $this->response(
                 $resultNewCart['status'],
@@ -37,12 +35,12 @@ class CartService extends Service
         }
 
         // check repetitive product in cart
-        if ($this->repository()->checkRepetitiveProductInCart($product->id)) {
+        if ($this->repository->checkRepetitiveProductInCart($product->id)) {
             return $this->response('fail', null, 'repetitive product', 400
             );
         }
 
-        $resultOldCart = $this->repository()->appendToOldCart($request->count, $product);
+        $resultOldCart = $this->repository->appendToOldCart($request->count, $product);
         return $this->response(
             $resultOldCart['status'],
             new CartResource($resultOldCart['data']),
@@ -53,7 +51,7 @@ class CartService extends Service
 
     public function showCart()
     {
-        return $this->repository()->show();
+        return $this->repository->show();
     }
 
     protected function response($status, $data, $message, $code): array

@@ -8,7 +8,6 @@ use App\Repository\Repository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CartRepository implements Repository
@@ -139,13 +138,17 @@ class CartRepository implements Repository
         ];
     }
 
+    /**
+     * Show cart collection
+     *
+     * @return Builder|Model
+     */
     public function show()
     {
         return $this->model()
             ->where('user_id', auth()->user()->id)
             ->whereHas('status', function ($query) {
                 $query->whereNot('name', 'perfect');
-            })
-            ->firstOrFail();
+            })->firstOrFail();
     }
 }

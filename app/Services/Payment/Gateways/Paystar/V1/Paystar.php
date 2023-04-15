@@ -10,7 +10,6 @@ class Paystar implements Payment
 {
     const ADD = "payment.driver.paystar";
 
-
     public function create(Order $order, string $payment)
     {
         $response = Http::withToken(config(self::ADD . '.gateway_id'))

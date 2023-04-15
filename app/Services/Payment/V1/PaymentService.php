@@ -11,9 +11,8 @@ use App\Services\Service;
 
 class PaymentService extends Service
 {
-    protected function repo()
+    public function __construct(public PaymentRepository $repository)
     {
-        return resolve(PaymentRepository::class);
     }
 
     /**
@@ -31,7 +30,7 @@ class PaymentService extends Service
             return $this->response('fail', null, $exception->getMessage(), 400);
         }
         try {
-            $payment = $this->repo()->storebeforPayment($order);
+            $payment = $this->repository->storebeforPayment($order);
 
             $response = Pay::driver(request()->gateway)->create($order, $payment->id);
             if ($response['status'] == 'error') {
@@ -43,7 +42,7 @@ class PaymentService extends Service
                 );
             }
 
-            $this->repo()->updateAfterPayment($payment, $response['data']);
+            $this->repository->updateAfterPayment($payment, $response['data']);
 
             return $this->response(
                 'success',
@@ -88,14 +87,14 @@ class PaymentService extends Service
                 500
             );
         }
-        $this->repo()->updateBeforeVerify($payment, $request->tracking_code, $request->card_number);
+        $this->repository->updateBeforeVerify($payment, $request->tracking_code, $request->card_number);
 
         $response = Pay::verify([
             'amount' => $payment->amount,
             'req' => $request
         ]);
 
-        $this->repo()->updateStatus($payment, [
+        $this->repository->updateStatus($payment, [
             'name' => $response['status'],
             'reason' => $response['message']
         ]);
