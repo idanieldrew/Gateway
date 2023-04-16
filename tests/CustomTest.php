@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
 
 class CustomTest extends TestCase
@@ -61,5 +62,18 @@ class CustomTest extends TestCase
             'cart' => $cart->id
         ]);
         return Order::first();
+    }
+
+    protected function mockForCreateAddPaystar()
+    {
+        Http::fake([
+            config('payment.driver.paystar.create_address') => Http::response([
+                'data' => [
+                    'token' => 'test_token',
+                    'ref_num' => 'test_ref'
+                ],
+                'status' => 1
+            ])
+        ]);
     }
 }

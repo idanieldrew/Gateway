@@ -7,15 +7,6 @@ uses(Tests\CustomTest::class, RefreshDatabase::class);
 
 it('expired_order_before_submit_payment', function () {
     $order = $this->createOrder();
-    Http::fake([
-        config('payment.driver.paystar.create_address') => Http::response([
-            'data' => [
-                'token' => 'test_token',
-                'ref_num' => 'test_ref'
-            ],
-            'status' => 1
-        ])
-    ]);
     $this->travel(2)->hours();
 
     $this->post(route('payment.port'), [
@@ -32,15 +23,6 @@ it('expired_order_before_submit_payment', function () {
 
 it('closed_order_before_submit_payment', function () {
     $order = $this->createOrder();
-    Http::fake([
-        config('payment.driver.paystar.create_address') => Http::response([
-            'data' => [
-                'token' => 'test_token',
-                'ref_num' => 'test_ref'
-            ],
-            'status' => 1
-        ])
-    ]);
     $order->model()->update([
         'name' => 'complete',
         'reason' => 'payed'
@@ -59,15 +41,6 @@ it('closed_order_before_submit_payment', function () {
 
 it('check_paid_before_submit_payment', function () {
     $order = $this->createOrder();
-    Http::fake([
-        config('payment.driver.paystar.create_address') => Http::response([
-            'data' => [
-                'token' => 'test_token',
-                'ref_num' => 'test_ref'
-            ],
-            'status' => 1
-        ])
-    ]);
     $this->post(route('payment.port'), [
         'order' => $order->id,
         'gateway' => 'paystar'
@@ -88,15 +61,6 @@ it('check_paid_before_submit_payment', function () {
 
 it('pay_again_before_submit_payment', function () {
     $order = $this->createOrder();
-    Http::fake([
-        config('payment.driver.paystar.create_address') => Http::response([
-            'data' => [
-                'token' => 'test_token',
-                'ref_num' => 'test_ref'
-            ],
-            'status' => 1
-        ])
-    ]);
     $this->post(route('payment.port'), [
         'order' => $order->id,
         'gateway' => 'paystar'
@@ -112,15 +76,6 @@ it('pay_again_before_submit_payment', function () {
 it('register_payment_for_paystar', function () {
     $order = $this->createOrder();
 
-    Http::fake([
-        config('payment.driver.paystar.create_address') => Http::response([
-            'data' => [
-                'token' => 'test_token',
-                'ref_num' => 'test_ref'
-            ],
-            'status' => 1
-        ])
-    ]);
 
     $this->post(route('payment.port'), [
         'order' => $order->id,
@@ -155,15 +110,6 @@ it('cant_complete_register_payment_for_paystar_with_incorrect_data', function ()
 
 it('incorrect_data_to_callback_url', function () {
     $order = $this->createOrder();
-    Http::fake([
-        config('payment.driver.paystar.create_address') => Http::response([
-            'data' => [
-                'token' => 'test_token',
-                'ref_num' => 'test_ref'
-            ],
-            'status' => 1
-        ])
-    ]);
 
     $this->post(route('payment.port'), [
         'order' => $order->id,
@@ -186,15 +132,6 @@ it('incorrect_data_to_callback_url', function () {
 
 it('correct_verify', function () {
     $order = $this->createOrder();
-    Http::fake([
-        config('payment.driver.paystar.create_address') => Http::response([
-            'data' => [
-                'token' => 'test_token',
-                'ref_num' => 'test_ref'
-            ],
-            'status' => 1
-        ])
-    ]);
 
     Http::fake([
         config('payment.driver.paystar.verify') => Http::response([
@@ -228,15 +165,7 @@ it('correct_verify', function () {
 
 it('incorrect_verify', function () {
     $order = $this->createOrder();
-    Http::fake([
-        config('payment.driver.paystar.create_address') => Http::response([
-            'data' => [
-                'token' => 'test_token',
-                'ref_num' => 'test_ref'
-            ],
-            'status' => 1
-        ])
-    ]);
+    $this->setMockHttp();
 
     Http::fake([
         config('payment.driver.paystar.verify') => Http::response([

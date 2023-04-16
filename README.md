@@ -42,3 +42,4 @@ docker-compose exec gateway php artisan migrate:fresh --seed
 - I tried to write feature tests and also use pest(Continues integration with GitHub action).
 - Paystar has a problem with Pasargad Bank, that's why I'm not sure if the service is correct, but I wrote a test for it and then I made sure that this service is correct, but I can't test it in operation and also this merchant code (sign) it's not a sandbox :| (Send reason on WhatsApp)
 - Documents exists in docs directory(Swagger)
+- This project is api,but template html file is exist just for show
