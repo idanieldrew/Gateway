@@ -31,6 +31,8 @@ jobs:
         run: cp .env.example .env
       - name: Generate app key
         run: php artisan key:generate
+      - name: Generate jwt secret
+        run: php artisan jwt:secret
       - name: Optimization
         run: php artisan optimize:clear
       - name: Migration
