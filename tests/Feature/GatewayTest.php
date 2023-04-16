@@ -41,6 +41,7 @@ it('closed_order_before_submit_payment', function () {
 
 it('check_paid_before_submit_payment', function () {
     $order = $this->createOrder();
+    $this->mockForCreateAddPaystar();
     $this->post(route('payment.port'), [
         'order' => $order->id,
         'gateway' => 'paystar'
@@ -61,6 +62,8 @@ it('check_paid_before_submit_payment', function () {
 
 it('pay_again_before_submit_payment', function () {
     $order = $this->createOrder();
+    $this->mockForCreateAddPaystar();
+
     $this->post(route('payment.port'), [
         'order' => $order->id,
         'gateway' => 'paystar'
@@ -75,7 +78,7 @@ it('pay_again_before_submit_payment', function () {
 
 it('register_payment_for_paystar', function () {
     $order = $this->createOrder();
-
+    $this->mockForCreateAddPaystar();
 
     $this->post(route('payment.port'), [
         'order' => $order->id,
@@ -110,6 +113,7 @@ it('cant_complete_register_payment_for_paystar_with_incorrect_data', function ()
 
 it('incorrect_data_to_callback_url', function () {
     $order = $this->createOrder();
+    $this->mockForCreateAddPaystar();
 
     $this->post(route('payment.port'), [
         'order' => $order->id,
@@ -132,6 +136,7 @@ it('incorrect_data_to_callback_url', function () {
 
 it('correct_verify', function () {
     $order = $this->createOrder();
+    $this->mockForCreateAddPaystar();
 
     Http::fake([
         config('payment.driver.paystar.verify') => Http::response([
@@ -165,7 +170,7 @@ it('correct_verify', function () {
 
 it('incorrect_verify', function () {
     $order = $this->createOrder();
-    $this->setMockHttp();
+    $this->mockForCreateAddPaystar();
 
     Http::fake([
         config('payment.driver.paystar.verify') => Http::response([
